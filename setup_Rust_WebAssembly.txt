@@ -1,0 +1,399 @@
+WEBASSEMBLY & RUST SOS
+
+RUST
+Windows Install: https://www.rust-lang.org/tools/install
+Rustup book: https://rust-lang.github.io/rustup/
+Rust update: rustup update
+Rust version: rustc --version
+Install Cargo: https://crates.io/
+New Cargo app: cargo init
+
+Extentions: Even Better Toml, Rust or Rust-anlyzer
+
+Run Program: cargo run
+If we want to run the project and show us only the result we hit this command:
+Run Program: cargo run -q
+
+FUNDAMENTALS IN RUST
+1)DATA TYPES: https://www.codingame.com/playgrounds/365/getting-started-with-rust/primitive-data-types
+fn add(num_one: i32, num_two: i32) -> i32 {  //we need to add the data type for each property
+    num_one + num_two
+}
+
+fn main() {
+    let foo = add(4,5);
+    println!("foo first: {0} {1}", foo, true); //if we want to print two values we add "{}" and the number indicates who will be printed first
+    println!("boolena first: {1} {0}", foo, true);
+    println!("{:?}", foo); //manipulating a value before it gets output it onto the terminal
+}
+2)CONDITIONALS
+a)
+fn add(num_one: i32, num_two: i32) -> i32 {  //we need to add the data type for each property
+    num_one + num_two
+}
+
+fn main() {
+    let total = add(4,5);
+
+    if total > 50 {
+        println!("You quilify free shipping");
+    }
+    else if  total > 20{
+        println!("if you add more items, you will quilify free shipping");
+    }
+    else{
+        print!("no free shipping");
+    }
+
+    print!("{}", total);
+}
+b) there are two ways of making condition with match operator.
+total = match free_shipping { //we use the match keyword, we create a condition
+    true => total + 0, //if the condition is true do this...
+    false => total + 5 //if the condition is false do this...
+    
+};
+
+match total {
+    1 => print!("1"),
+    2 => print!("2"),
+    _ => print!("NO match found.")
+};
+
+3)ARRAYS
+//Arrays used when we have fixed nymber of items
+let items: [i32; 5] = [1,2,3,4,5];
+println!("{:?}", items );
+
+4)VECTORS
+//Vectors are used when we need to create an array with undefined number of items
+    let vector_items = vec![1,2,3,4,5];
+    let mut vector_items_2 = Vec::new(); //we need the mut to push a value in the vector
+    vector_items_2.push(1);
+    vector_items_2.push(2);
+    vector_items_2.push(3);
+    vector_items_2.push(4);
+    vector_items_2.push(5);
+
+    println!("{:?}", vector_items);
+    println!("{:?}", vector_items_2);
+
+5)STRUCTURES
+a)struct BankAccount {
+    balance: i32,
+    verified: bool
+}
+
+fn main() {
+    let my_account = BankAccount {
+        balance: 20,
+        verified: true
+    };
+
+    println!("{:?}", my_account.balance);
+    println!("{:?}", my_account.verified);
+}
+b)Most of the programming languages have memory leak. Rust is memory efficient. It can borrow the values of a property and use it in a different function.
+This way Rust can dicrease the memory leak of a program.  
+struct BankAccount {
+    balance: i32,
+    verified: bool
+}
+//By adding this symbol " & ", Russ will prevent the function from taking ownership away and said it'll allow
+// the function to borrow the value for reading purposes after the function is finished running.
+fn print_balance(account: &BankAccount){
+    println!("{:?}", account.balance);
+}
+fn print_verified(account: &BankAccount){
+    println!("{:?}", account.verified);
+}
+fn main() {
+    let my_account = BankAccount {
+        balance: 20,
+        verified: true
+    };
+
+    print_balance(&my_account);
+    print_verified(&my_account);
+}
+
+6)RESULTS type
+The result type can store two types of values a valid value or an error.Just because our code compiles doesn't mean we won't encounter errors.
+struct BankAccount {
+    balance: i32,
+    verified: bool
+}
+//By adding this symbol " & ", Russ will prevent the function from taking ownership away and said it'll allow
+// the function to borrow the value for reading purposes after the function is finished running.
+fn print_balance(account: &BankAccount){
+    println!("{:?}", account.balance);
+}
+fn print_verified(account: &BankAccount){
+    println!("{:?}", account.verified);
+}
+//Results
+fn is_verified(account: &BankAccount) -> Result<bool, bool>{
+    return match account.verified {
+        true => Ok(true),
+        false => Err(false)
+    };
+}
+
+fn main() {
+    let my_account = BankAccount {
+        balance: 20,
+        verified: false //throw an error message
+    };
+    let verification_status = is_verified(&my_account)
+        // .unwrap();
+        .expect("Unable to unwrap results.");
+
+    print_balance(&my_account);
+    print_verified(&my_account);
+    println!("{:?}", verification_status)
+}
+
+PREPARE THE PROJECT
+1)cargo init --lib
+2)Installing Webpack (https://webpack.js.org/)
+3)npm init -y : This command will create a package file.
+4)npm install -D webpack webpack-cli webpack-dev-server
+    a)WebPack-Core of webpack : It's the core functionality of Web Pack.In almost all cases, you will need to download this package for bundling files.
+    b)Webpacxk CLI -a CLI tool for running webpack from the command line.It also has other tools for working with plugins, which can be helpful if you want to develop a plugin
+    for Web Pack.
+    c)Webpack Dev Server - A develpment server to preview our app.Luckily, this package will prepare a server on our local machines.
+    We don't need to write server side code to start a development server.
+
+5)Configuring Webpack - learn how to bundle HTML and JavaScript with webpack.
+Project code -> Webpack -> Bundle
+a)we download from the source of the lecture the zip file with the main.js and the index.html files.W add these files in a new folder named public.
+
+b)Create a file for configuration: webpack.config.js
+"webpack.config.js"
+const path = require('path')
+
+module.exports ={
+    entry: './public/main.js',
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'index.js'
+    }
+}
+
+c)npm install -D html-webpack-plugin: is a plug in for processing HTML files with Web pack.
+and we add this in the "webpack.config.ts" file
+const path = require('path')
+const HTMLWebpackPlugin = require('html-webpack-plugin')
+
+module.exports ={
+    entry: './public/main.js',
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'index.js'
+    },
+    plugins: [
+        new HTMLWebpackPlugin({
+            template: './public/index.html'
+        })
+    ]
+}
+d)NOw we can start the development server 
+"package.json"
+"scripts": {
+    "serve": "webpack serve --mode=development",
+    "build": "webpack --mode=production"
+  },
+and hit: npm run serve
+
+6)READING FILES https://developer.mozilla.org/en-US/docs/Web/API/FileReader#methods
+a)This way we can safly upload a file ( image )
+"main.js"
+function init(){
+    const input = document.getElementById('upload')
+    const fileReader = new FileReader()
+
+    fileReader.onload = ()  =>{
+        let base64 = fileReader.result.replace(  //we add the replace() func to remove the meta deta from the uploaded file. They dont need
+            /^data:image\/(png|jpeg|jpg);base64,/, ''  //here is the expression
+        )
+        console.log(input.files[0])
+        console.log(base64)
+    }
+
+    input.addEventListener('change', () => {
+        fileReader.readAsDataURL(input.files[0]) //it transforms the image in to a string
+    })
+}
+
+init()
+
+7)COMPILING RUST WITH WEBPACK (https://rustwasm.github.io/wasm-pack/)
+a)install Wasm: npm install -D @wasm-tool/wasm-pack-plugin
+2nd way : npm install -g wasm-pack
+b)"webpack.config.js"
+const path = require('path')
+const HTMLWebpackPlugin = require('html-webpack-plugin')
+const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin")
+
+module.exports ={
+    entry: './public/main.js',
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'index.js'
+    },
+    plugins: [
+        new HTMLWebpackPlugin({
+            template: './public/index.html'
+        }),
+        new WasmPackPlugin({    //return the root direcotry of our project
+            crateDirectory: path.resolve(__dirname, '.')
+        })
+    ]
+}
+c)"Cargo.toml"
+[lib] //We should tell Rust that we'll be able to call our functions from other languages.Then ceate an array called lib
+crate-type = ["cdylib"] //We're telling Rust to produce a crate with support for external languages.
+
+
+8)IMPORTING WEBASSEMBLY (https://crates.io/crates/wasm-bindgen)
+Using the above package we can transform javascript code in ot rust and the opposite.Folow the installation process.
+a)"cargo.toml" add the following
+wasm-bindgen = "0.2.87"
+
+b)import a webassembly file. We will do a few modifications.
+"main.js"
+async function init(){
+    let rustApp = null
+
+    try {
+        rustApp = await import('../pkg') //try to import the rust file
+    } catch (e) {
+        console.error(e) //failed to import the rust file
+        return;
+    }
+    console.log(rustApp)
+    ...
+c)To be able to run webassembly we need to add this lines of code. After this we will be able to run  our project.
+"webpack.config.js"
+],
+    experiments: {
+        asyncWebAssembly: true
+    }
+
+9)LOGGING FILES
+NOw we will start writing function in Rust.
+a)"main.js"
+fileReader.onload = ()  =>{
+    let base64 = fileReader.result.replace(  //we add the replace() func to remove the meta deta from the uploaded file. They dont need
+        /^data:image\/(png|jpeg|jpg);base64,/, ''  //here is the expression
+    )
+    rustApp.grayscale(base64) //this need to be defined to be used
+}
+b)Here we will define the functions for our rust project.
+We are borrowing this string because we're not going to update this string directly.
+The purpose of encoding the file was to transfer it between JavaScript and Rust.Mission accomplished.
+Once we receive the file, we're going to transform it back into binary data.Once we have the binary data, we can begin to manipulate the image.
+a)"lib.rs"
+//They use keyword allows us to access a specific function or macro from within a crate.
+//macro attributes
+use wasm_bindgen::prelude::wasm_bindgen;
+// use wasm_bindgen::prelude::*; this is the same line as the the above but shorter
+
+#[wasm_bindgen]
+pub fn grayscale(encoded_file: &str) {
+
+}
+b)https://crates.io/crates/web-sys
+"cargo.toml"
+...
+[dependencies.web-sys]
+version = "0.3.64"
+features =["console"]
+
+10)BASE64 DECODING https://crates.io/crates/base64
+Now we will transfer the string data back to binary data. From the link copy and past the installation code.
+a)"cargo.toml"
+[dependencies]
+wasm-bindgen = "0.2.87"
+base64 = "0.21.2"
+
+b)
+"lib.rs"
+use base64::decode;
+...
+pub fn grayscale(encoded_file: &str) {
+    log(&"Grayscale.called".into());
+
+    let base64_to_vector = decode(encoded_file).unwrap();
+    log(&"Image decoded".into());
+}
+
+11)LOADING AN IMAGE FROM MEMORY [dependencies]
+a)We will try to load the image we uploaded before
+"Cargo.toml"
+wasm-bindgen = "0.2.87"
+base64 = "0.21.2"
+image = "0.23.14" //If i use latest version it produce error on the project
+b)"lib.rs"
+ let img = load_from_memory(&base64_to_vector).unwrap();
+    log(&"Image loaded".into());
+
+12)GRAYSCALING AN IMAGE https://docs.rs/image/0.19.0/image/enum.DynamicImage.html#method.grayscale
+a)"lib.rs"
+    img = img.grayscale();
+    log(&"Grayscale effect applied".into());
+}
+
+13)BUFFERING THE IMAGE.
+Buffers are a feature for temporarily storing data.
+"lib.rs"
+use image::ImageOutputFormat::Png;
+....
+let mut buffer = vec![];
+img.write_to(&mut buffer, Png).unwrap(); //function will initiate the process of converting an image into binary data.
+log(&"New image written".into());
+
+NOTE: RESUME
+Let's review everything we've done thus far.Everything begins with JavaScript in our JavaScript file.
+We're accepting an object called file.It represents the file uploaded by the user.
+We decided to convert this object into a base 64 string.This is because it's easier to send file data as strings.
+Afterward, we send this string to Rust's in our US file.We decoded this string into binary data.
+This binary data was given to a create called image.The image create will create a wrapper called dynamic image.
+This wrapper has methods for interacting with the image.We applied a grayscale effect to the image through this wrapper.
+At this point, we need to reverse the chain by converting the image into binary data.
+Next, we need to convert the binary data into a base 64 string.
+The string will be given back to JavaScript from their JavaScript can render the image.
+
+14)ENCODING AN IMAGE
+a)"lib.rs"
+use base64::{ encode, decode};
+...
+pub fn grayscale(encoded_file: &str) -> String {  //we added the String  type
+    log(&"Grayscale.called".into());
+    ...
+    let encoded_img = encode(&buffer);
+    let data_url = format!(
+        "data:image/png;base64,{}",
+        encoded_img
+    );
+
+    data_url
+}
+b)"main.js"
+fileReader.onload = ()  =>{
+    let base64 = fileReader.result.replace(  //we add the replace() func to remove the meta deta from the uploaded file. They dont need
+        /^data:image\/(png|jpeg|jpg);base64,/, ''  //here is the expression
+    )
+    let img_data_url = rustApp.grayscale(base64)
+    document.getElementById('new-img').setAttribute(
+        'src', img_data_url
+    )
+}
+We can use this URL to render an image.The browser will decode the image on our behalf in our documents.
+We have an image shank.Let's select it with the document dont gets element by ID function.
+The ID of the image is called new image.We will want to find the source attribute with this set attribute function, the value for this attribute
+will be the image data.
+
+Now if we upload the image we will see the result. The uploades img is grayscaled
+
+15)DEPLOY THE PROJECT
